@@ -1,2 +1,2 @@
-# homework_01.09.26
+# homework_pyton
 # Условия и циклы в Python
