@@ -34,9 +34,6 @@ def test_session_storage_auth():
     url_user2 = driver.current_url
     print ("URL user2:", url_user2)
 
-    if url_user1 != url_user2:
-        print("URL для пользователей различаются.")
-    else:
-         print("URL совпадают.")
+    assert url_user1 != url_user2, f"{url_user1}"
 
     driver.quit()
