@@ -9,31 +9,32 @@ def test_session_storage_auth():
     driver.maximize_window()
     wait = WebDriverWait(driver, 5)
     
-    driver.get("https://gitflic.ru/")
+    driver.get("https://gitflic.ru")
     driver.add_cookie ({
         "name": "SESSION",
-        "value": "ZDFmODA4NTYtODdiNC00NzQ2LWI1YTEtOTY4MGYxNzgyMjVl",
+        "value": "ZDhlMTAxNDAtOTIwNy00ZWVmLWFmMTctMDJmMzViM2E0MzA0",
         "domain": "gitflic.ru"
     })
     driver.refresh()
 
-    driver.get("https://gitflic.ru/")
+    driver.get("https://gitflic.ru/user/mor183")
     url_user1 = driver.current_url
     print ("URL user1:", url_user1)
 
     driver.delete_all_cookies ()
-    driver.get("https://gitflic.ru/")
+    driver.get("https://gitflic.ru")
     driver.add_cookie ({
             "name": "SESSION",
-            "value": "MDk3Y2YxNWEtMzJlMy00OTBhLWI3ZDYtNzYwOTdlMzgwMjcy",
+            "value": "MGQ1Y2NlYmItYTA0NC00MGNhLThjN2MtZmVlMzFhMmYwNWI4",
             "domain": "gitflic.ru"
         })
     driver.refresh()
 
-    driver.get("https://gitflic.ru/")
+    driver.get("https://gitflic.ru/user/wibeyura")
     url_user2 = driver.current_url
     print ("URL user2:", url_user2)
 
-    assert url_user1 != url_user2, f"{url_user1}"
+    assert url_user1 != url_user2, "URL для пользователей не различаются!"
+    print("Тест пройден: URL для пользователей действительно разные.")
 
     driver.quit()
