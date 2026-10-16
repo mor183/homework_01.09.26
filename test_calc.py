@@ -21,13 +21,6 @@ def test_calculator(driver):
     calculator_page.click_equals_button()
 
     result = calculator_page.get_result_text()
-
-    result_element = driver.find_element(By.CSS_SELECTOR, "div.screen")
-    result = result_element.text.strip()
-
-    WebDriverWait(driver, 46).until(
-        EC.text_to_be_present_in_element((By.CSS_SELECTOR, "div.screen"), "15"))
-
     result_element = driver.find_element(By.CSS_SELECTOR, "div.screen")
     result = result_element.text.strip()
     assert result == "15"
