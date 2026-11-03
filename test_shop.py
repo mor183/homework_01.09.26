@@ -1,33 +1,39 @@
-import pytest
+import allure
 from selenium import webdriver
-from pages.shop_page import LoginPage, ProductsPage, CheckoutPage, PersonalInfoPage, OverviewPage
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from webdriver_manager.firefox import GeckoDriverManager
+from page_shop import BuyingPage
 
-@pytest.fixture
-def browser():
-    driver = webdriver.Firefox()
-    yield driver
-    driver.quit()
+@allure.title("Проверка итоговой стоимости в интернет-магазине")
+@allure.description("Тест сравнивает сумму добавленных в корзину товаров с конкретным значением")
+@allure.feature("CREATE")
+@allure.severity("blocker")
 
-def test_complete_purchase(browser):
-    saucedemo_url = "https://www.saucedemo.com/"
+def test_buying_process():
+    with allure.step("Запуск браузера FireFox"):
+        options = Options()
+        options.binary_location = r"C:\Users\mor18\.cache\selenium\firefox\win64\157.0.1\firefox.exe"
+        service = FirefoxService(executable_path=GeckoDriverManager().install())
+        browser = webdriver.Firefox(service=service, options=options)
 
-    login_page = LoginPage(browser)
-    products_page = ProductsPage(browser)
-    checkout_page = CheckoutPage(browser)
-    personal_info_page = PersonalInfoPage(browser)
-    overview_page = OverviewPage(browser)
+    with allure.step("Переход на страницу интернет-магазина"):
+        page = BuyingPage(browser)
 
-    login_page.login_as_standard_user()
+    with allure.step("Авторизация"):
+        page.authorization("standard_user", "secret_sauce")
+    
+    with allure.step("Добавление товаров в корзину"):
+        page.add_products()
+    
+    with allure.step("Переход в корзину"):
+        page.go_to_cart()
 
-    products_page.add_products_to_cart("Sauce Labs Backpack", "Sauce Labs Bolt T-Shirt", "Sauce Labs Onesie")
-
-    products_page.go_to_shopping_cart()
-
-    checkout_page.proceed_to_checkout()
-
-    personal_info_page.fill_personal_info("Anna", "K", "1234")
-
-    total_amount = overview_page.get_total_amount()
-    assert total_amount == "58.29", f"Expected '58.29', but got {total_amount}"
-
-    overview_page.complete_purchase()
+    with allure.step("Ввод данных покупателя"):
+        page.personal_data("Аnna", "K", "1234")
+    
+    with allure.step("Сравнение итоговой стоимости с конкретным значением"):
+        total = page.total_cost()
+    assert total == "Total: $58.29", f"Expected total to be 'Total: $58.29' but got '{total}'"
+    
+    page.close()
