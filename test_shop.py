@@ -12,10 +12,7 @@ from page_shop import BuyingPage
 
 def test_buying_process():
     with allure.step("Запуск браузера FireFox"):
-        options = Options()
-        options.binary_location = r"C:\Users\mor18\.cache\selenium\firefox\win64\157.0.1\firefox.exe"
-        service = FirefoxService(executable_path=GeckoDriverManager().install())
-        browser = webdriver.Firefox(service=service, options=options)
+        browser = webdriver.Firefox()
 
     with allure.step("Переход на страницу интернет-магазина"):
         page = BuyingPage(browser)
