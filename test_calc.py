@@ -1,33 +1,35 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait  
-from selenium.webdriver.support import expected_conditions as EC
-from pages.calculator_page import CalculatorPage
+import allure
 import pytest
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
 
-@pytest.fixture
-def driver():
-    driver = webdriver.Chrome()
-    yield driver
-    driver.quit()
+from page_calc import Calculator
 
-def test_calculator(driver):
-    calculator_page = CalculatorPage(driver)
-    calculator_page.open_page("https://bonigarcia.dev/selenium-webdriver-java/slow-calculator.html")
-    calculator_page.enter_delay_value("45")
-    calculator_page.click_button("7")
-    calculator_page.click_operator_button("+")
-    calculator_page.click_button("8")
-    calculator_page.click_equals_button()
+@allure.title("Калькулятор")
+@allure.description("Проверка работы калькулятора")
+@allure.feature("CREATE")
+@allure.severity("blocker")
 
-    result = calculator_page.get_result_text()
 
-    result_element = driver.find_element(By.CSS_SELECTOR, "div.screen")
-    result = result_element.text.strip()
 
-    WebDriverWait(driver, 46).until(
-        EC.text_to_be_present_in_element((By.CSS_SELECTOR, "div.screen"), "15"))
 
-    result_element = driver.find_element(By.CSS_SELECTOR, "div.screen")
-    result = result_element.text.strip()
-    assert result == "15"
+def test_calculator():
+    with allure.step("Запуск браузера Chrome"):
+        driver = webdriver.Chrome(
+            service=ChromeService(ChromeDriverManager().install()))
+
+    with allure.step("Загрузка страницы калькулятора"):
+        calculator = Calculator(driver)
+
+    with allure.step("Выставление задержки выполнения действия"):    
+        calculator.delay()
+
+    with allure.step("Выполнени выражения"):    
+        calculator.sum_nums()
+
+    with allure.step("Сравненение значения выражения с числом 15"):    
+        assert calculator.result() == '15'
+        
+    with allure.step("Закрытие браузера Chrome"):    
+        calculator.close_driver()
